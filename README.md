@@ -91,7 +91,7 @@ alias scone="docker run -it --rm \
 
 ### Attesting SCONE CAS
 
-Before utilizing SCONE, it is crucial to attest the SCONE CAS (Confidentiality and Attestation Service) to ensure its integrity and authenticity. You can attest the SCONE CAS by running the following command:
+Before utilizing SCONE, it is crucial to attest the SCONE CAS (Configuration and Attestation Service) to ensure its integrity and authenticity. You can attest the SCONE CAS by running the following command:
 
 ```
 scone cas attest $CAS_ADDR $CAS_MRENCLAVE -GCS --only_for_testing-debug --only_for_testing-ignore-signer
