@@ -6,7 +6,7 @@ This repository holds the implementation of a Compliance Certification System fo
 
 - **SCONE**: This implementation utilizes SCONE, a Intel SGX based Trusted Execution Environment (TEE) solution, to establish a secure environment for the cluster scanning process. SCONE ensures the integrity and confidentiality of sensitive data by encrypting and isolating it from potential threats.
 
-- **Marvin**: The scanning engine is powered by Marvin, a CLI tool designed to help Kubernetes cluster administrators ensure the security and reliability of their environments. Marvin performs extensive checks on cluster resources and configurations to identify potential issues, misconfigurations, and vulnerabilities.
+- **Marvin**: The scanning engine is powered by [Marvin](https://undistro.io/marvin), a CLI tool designed to help Kubernetes cluster administrators ensure the security and reliability of their environments. Marvin performs extensive checks on cluster resources and configurations to identify potential issues, misconfigurations, and vulnerabilities.
 
 - **Ethereum**: The compliance certification system integrates with the Ethereum blockchain technology. It leverages Ethereum smart contracts, specifically the `CertificateEmitter` contract, to achieve transparency, traceability, and reliability in the certification process.
 
