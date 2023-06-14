@@ -2,7 +2,10 @@ package compliance
 
 import (
 	"context"
+	"errors"
+	"log"
 	"math/big"
+	"os"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -30,21 +33,34 @@ func EmitCertificate(name string, date string, issuer string, status string) (st
 		return "", err
 	}
 
+	contract := os.Getenv("CONTRACT_ADDRESS")
+	if contract == "" {
+		return "", errors.New("CONTRACT_ADDRESS env is required")
+	}
+
+	pkey := os.Getenv("PRIVATE_KEY")
+	if pkey == "" {
+		return "", errors.New("PRIVATE_KEY env is required")
+	}
+
+	receiverPublicKey := os.Getenv("RECEIVER_PUBLIC_KEY")
+	if receiverPublicKey == "" {
+		return "", errors.New("RECEIVER_PUBLIC_KEY env is required")
+	}
+
+	log.Printf("Loading contract instance...")
 	// Load the contract instance
-	contractAddress := common.HexToAddress("0xBDbbaA60717E4A749415Aa97c879e4442072D3dE") // replace with actual contract address
+	contractAddress := common.HexToAddress(contract) // replace with actual contract address
 	certificateEmiter, err := NewCertificateEmiter(contractAddress, client)
 	if err != nil {
 		return "", err
 	}
 
 	// *ecdsa.PrivateKey from string (replace with actual private key)
-	privateKey, err := crypto.HexToECDSA("578fb20cc9ca9662d07ff4b5d33e22c4bda2697cd3fd33f7d3b5278ac6c343be")
+	privateKey, err := crypto.HexToECDSA(pkey)
 	if err != nil {
 		return "", err
 	}
-
-	// Receiver public key
-	receiverPublicKey := "0xcD6b5Cf0E7eE343d319Aa93B9939222898109036" // replace with actual public key
 
 	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, big.NewInt(1337))
 	if err != nil {
@@ -52,6 +68,8 @@ func EmitCertificate(name string, date string, issuer string, status string) (st
 	}
 
 	receiverAddress := common.HexToAddress(receiverPublicKey)
+
+	log.Printf("Starting certificate emission...")
 	tx, err := certificateEmiter.EmitCertificate(auth, receiverAddress, name, date, issuer, status)
 
 	if err != nil {
@@ -59,6 +77,7 @@ func EmitCertificate(name string, date string, issuer string, status string) (st
 	}
 
 	// Wait for the transaction to be mined
+	log.Printf("Waiting for the transaction to be mined...")
 	ctx := context.Background()
 	receipt, err := bind.WaitMined(ctx, client, tx)
 	if err != nil {

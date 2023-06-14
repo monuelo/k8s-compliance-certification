@@ -2,7 +2,7 @@ package compliance
 
 import (
 	"context"
-	"fmt"
+	"log"
 
 	"github.com/ethereum/go-ethereum/ethclient"
 )
@@ -20,7 +20,7 @@ func NewClient() (*ethclient.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("Connected to local Ganache instance (block number: %d)\n", blockNumber)
+	log.Printf("Connected to local Ganache instance (block number: %d)\n", blockNumber)
 
 	// Return the client instance
 	return client, nil

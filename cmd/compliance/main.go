@@ -1,20 +1,29 @@
 package main
 
 import (
-	"flag"
 	"log"
+	"os"
+	"time"
 
 	"github.com/monuelo/compliance-cli/internal/compliance"
 )
 
 func main() {
-	var (
-		server string
-		token  string
-	)
-	flag.StringVar(&server, "server", "", "Kubernetes API server address and port")
-	flag.StringVar(&token, "token", "", "Bearer token for authentication to the API server")
-	flag.Parse()
+	args := os.Args[1:]
+
+	server := getFlagValue(args, "--server")
+	token := getFlagValue(args, "--token")
+
+	if server == "" {
+		server = os.Getenv("KUBE_SERVER")
+	}
+	if token == "" {
+		token = os.Getenv("KUBE_TOKEN")
+	}
+
+	if server == "" || token == "" {
+		log.Fatal("Server address and token are required")
+	}
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
@@ -27,9 +36,9 @@ func main() {
 	// Verify tests
 	if verifyTests(output) {
 		log.Printf("All compliance tests passed!")
-		name := "John Doe"
-		date := "2022-01-01"
-		issuer := "My Company"
+		name := "Company Name"
+		date := time.Now().Format("01-02-2006")
+		issuer := "Zora Compliance"
 		status := "Pass"
 		txHash, err := compliance.EmitCertificate(name, date, issuer, status)
 		if err != nil {
@@ -42,7 +51,6 @@ func main() {
 }
 
 func verifyTests(result *compliance.ScanResult) bool {
-	return true
 	var (
 		totalFailed int
 		totalPassed int
@@ -60,4 +68,13 @@ func verifyTests(result *compliance.ScanResult) bool {
 	log.Printf("Total passed: %d\n", totalPassed)
 
 	return totalFailed == 0
+}
+
+func getFlagValue(args []string, flagName string) string {
+	for i := 0; i < len(args); i++ {
+		if args[i] == flagName && i+1 < len(args) {
+			return args[i+1]
+		}
+	}
+	return ""
 }
