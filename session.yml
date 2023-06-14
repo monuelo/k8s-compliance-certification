@@ -1,0 +1,34 @@
+name: $NS/compliance-$RANDOM
+version: "0.3"
+
+services:
+  name: $NS/compliance-$RANDOM
+  attestation:
+    mrenclave: [$MRENCLAVE]
+  command: ./compliance scan
+  pwd: /
+  environment:
+    SCONE_MODE: hw
+    KUBE_TOKEN: $$SCONE::access_token$$
+    KUBE_SERVER: $$SCONE::server_address$$
+    PRIVATE_KEY: $$SCONE::private_key$$
+    CONTRACT_ADDRESS: $$SCONE::contract_address$$
+    RECEIVER_PUBLIC_KEY: $$SCONE::receiver_public_key$$
+
+
+secrets:
+    - name: server_address
+      kind: ascii
+      value: <server_address_value>
+    - name: access_token
+      kind: ascii
+      value: <access_token_value>
+    - name: contract_address
+      kind: ascii
+      value: <contract_address_value>
+    - name: receiver_public_key
+      kind: ascii
+      value: <receiver_public_key_value>
+    - name: private_key
+      kind: ascii
+      value: <private_key_value>
